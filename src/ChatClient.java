@@ -1,13 +1,11 @@
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.io.*;
 import java.net.*;
 
 public class ChatClient extends Frame {
 	Socket socket =null;
+	DataOutputStream dos = null;
 	TextField tfTxt = new TextField();
 	TextArea taContent = new TextArea();
 
@@ -24,6 +22,7 @@ public class ChatClient extends Frame {
 		this.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
+				disconnect();
 				System.exit(0);
 			}
 		});
@@ -35,6 +34,7 @@ public class ChatClient extends Frame {
 	public void connect(){
 		try {
 			socket = new Socket("127.0.0.1",8888);
+			dos = new DataOutputStream(socket.getOutputStream());
 		}catch (UnknownHostException e){
 			e.printStackTrace();
 		}catch (IOException e) {
@@ -42,15 +42,24 @@ public class ChatClient extends Frame {
 		}
 	}
 
+	public void disconnect(){
+		try{
+			dos.close();
+			socket.close();
+		}catch (IOException e){
+			e.printStackTrace();
+		}
+	}
+
+
 	private class TextFieldListener implements ActionListener{
 		public void actionPerformed(ActionEvent e){
 			String str = tfTxt.getText().trim();
 			taContent.setText(str);
 			try {
-				DataOutputStream dos = new DataOutputStream(socket.getOutputStream());
+				System.out.println(socket);
 				dos.writeUTF(str);
 				dos.flush();
-				dos.close();
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			}
