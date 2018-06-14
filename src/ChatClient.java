@@ -3,10 +3,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.*;
+import java.net.*;
 
 public class ChatClient extends Frame {
+	Socket socket =null;
 	TextField tfTxt = new TextField();
-
 	TextArea taContent = new TextArea();
 
 	public static void main(String[] args){
@@ -27,12 +29,31 @@ public class ChatClient extends Frame {
 		});
 		tfTxt.addActionListener(new TextFieldListener());
 		setVisible(true);
+		connect();
+	}
+
+	public void connect(){
+		try {
+			socket = new Socket("127.0.0.1",8888);
+		}catch (UnknownHostException e){
+			e.printStackTrace();
+		}catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private class TextFieldListener implements ActionListener{
 		public void actionPerformed(ActionEvent e){
-			String s = tfTxt.getText().trim();
-			taContent.setText(s);
+			String str = tfTxt.getText().trim();
+			taContent.setText(str);
+			try {
+				DataOutputStream dos = new DataOutputStream(socket.getOutputStream());
+				dos.writeUTF(str);
+				dos.flush();
+				dos.close();
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
 		}
 	}
 }
