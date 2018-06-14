@@ -4,17 +4,20 @@ import java.net.*;
 
 public class ChatServer {
 	public static void main(String[] args) throws IOException {
-		boolean started ;
+		boolean started;
+		ServerSocket ss = null;
+		DataInputStream dis = null;
+		Socket s = null;
 		try{
-			ServerSocket ss = new ServerSocket(8888);
+			ss = new ServerSocket(8888);
 			started = true;
 
 			while (started){
 				boolean bConnected = false;
-				Socket s = ss.accept();
+				s = ss.accept();
 				bConnected = true;
 				System.out.println("a client connected");
-				DataInputStream dis = new DataInputStream(s.getInputStream());
+				dis = new DataInputStream(s.getInputStream());
 				while (bConnected){
 					String str = dis.readUTF();
 					System.out.println(str);
@@ -22,6 +25,13 @@ public class ChatServer {
 				dis.close();
 			}
 		}catch (IOException e){
+			try {
+				dis.close();//在处理完之后需要关闭DataStream和ServerSocket
+				ss.close();
+			}catch (IOException e1)
+			{
+				e1.printStackTrace();
+			}
 			e.printStackTrace();
 		}
 
