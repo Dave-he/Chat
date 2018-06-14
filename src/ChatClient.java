@@ -1,5 +1,5 @@
-import javax.swing.border.Border;
 import java.awt.*;
+
 public class ChatClient extends Frame {
 	TextField tfTxt = new TextField();
 	TextArea taContent = new TextArea();
