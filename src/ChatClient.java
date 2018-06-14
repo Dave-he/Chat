@@ -36,16 +36,18 @@ public class ChatClient extends Frame {
 			socket = new Socket("127.0.0.1",8888);
 			dos = new DataOutputStream(socket.getOutputStream());
 		}catch (UnknownHostException e){
-			e.printStackTrace();
+			System.out.println("There is no host");
 		}catch (IOException e) {
-			e.printStackTrace();
+			System.out.println("input failed");
 		}
 	}
 
 	public void disconnect(){
 		try{
-			dos.close();
-			socket.close();
+			if(dos!=null) {
+				dos.close();
+				socket.close();
+			}
 		}catch (IOException e){
 			e.printStackTrace();
 		}
@@ -58,8 +60,10 @@ public class ChatClient extends Frame {
 			taContent.setText(str);
 			try {
 				System.out.println(socket);
-				dos.writeUTF(str);
-				dos.flush();
+				if(dos!=null) {
+					dos.writeUTF(str);
+					dos.flush();
+				}
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			}
